@@ -1,1 +1,1 @@
-Calendar application I designed a while ago to learn Java Swing from this tutorial: www.dreamincode.net/forums/topic/25042-creating-a-calendar-viewer-application/ Recently updated to use JDBC and push to github.
+Calendar application I designed a while ago to learn Java Swing from this tutorial: www.dreamincode.net/forums/topic/25042-creating-a-calendar-viewer-application/ Recently updated to use JDBC.
