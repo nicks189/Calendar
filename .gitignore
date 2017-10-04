@@ -1,7 +1,6 @@
 Calendar.iml
 target/
 src/test/
-src/main/resources/
 logs/
 out/
 /.idea
