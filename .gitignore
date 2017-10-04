@@ -5,4 +5,4 @@ src/main/resources/
 logs/
 out/
 /.idea
-*.sh
+*.shsrc/main/resources/db.properties
