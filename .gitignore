@@ -4,4 +4,5 @@ src/test/
 logs/
 out/
 /.idea
-*.shsrc/main/resources/db.properties
+*.sh
+src/main/resources/db.properties
