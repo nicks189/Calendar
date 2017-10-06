@@ -6,3 +6,4 @@ out/
 /.idea
 *.sh
 src/main/resources/db.properties
+src/main/java/JDBC/Version.java
