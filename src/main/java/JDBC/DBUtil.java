@@ -27,18 +27,10 @@ public class DBUtil {
                     String passwd = props.getProperty("db.passwd");
                     return DriverManager.getConnection(url, user, passwd);
             }
-        } catch (FileNotFoundException ex) {
-
-            Logger lgr = Logger.getLogger(RetrieveAll.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
         } catch (IOException ex) {
-
             Logger lgr = Logger.getLogger(RetrieveAll.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
         } finally {
-
             try {
                 if (in != null) {
                     in.close();
