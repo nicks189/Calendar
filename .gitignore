@@ -5,5 +5,5 @@ logs/
 out/
 /.idea
 *.sh
-src/main/resources/db.properties
+src/main/resources/
 src/main/java/JDBC/Version.java
