@@ -18,7 +18,7 @@ public class RetrieveAll {
             while (rs.next()) {
                 System.out.print(rs.getInt(1));
                 System.out.print(": ");
-                System.out.print(rs.getString(2));
+                System.out.print(rs.getString("date"));
                 System.out.print(" ");
                 System.out.println(rs.getString(3));
             }
