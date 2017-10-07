@@ -18,7 +18,7 @@ public class DBUtil {
 
         try {
             switch (type) {
-                // Currently only support MySQL
+                // Currently only supports MySQL
                 case MYSQL:
                     in = new FileInputStream("src/main/resources/db.properties");
                     props.load(in);
