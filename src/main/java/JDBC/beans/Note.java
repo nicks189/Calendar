@@ -1,4 +1,4 @@
-package JDBC.JDBC.beans;
+package JDBC.beans;
 
 import java.sql.Date;
 
@@ -6,6 +6,14 @@ public class Note {
     private int id;
     private Date date;
     private String info;
+
+    public Note() {}
+
+    public Note(int id, Date date, String info) {
+        this.id = id;
+        this.date = date;
+        this.info = info;
+    }
 
     public int getId() {
         return id;
