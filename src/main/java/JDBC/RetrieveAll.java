@@ -1,9 +1,6 @@
 package JDBC;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class RetrieveAll {
 
@@ -11,17 +8,13 @@ public class RetrieveAll {
 
         try (
                 Connection con = DBUtil.getConnection(DBType.MYSQL);
-                PreparedStatement pst = con.prepareStatement("SELECT * FROM notes");
-                ResultSet rs = pst.executeQuery();
+                CallableStatement cst = con.prepareCall("{CALL GET_ALL_NOTES()}",
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,
+                        ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = cst.executeQuery();
                 ) {
 
-            while (rs.next()) {
-                System.out.print(rs.getInt(1));
-                System.out.print(": ");
-                System.out.print(rs.getString("date"));
-                System.out.print(" ");
-                System.out.println(rs.getString(3));
-            }
+            System.out.print(Notes.displayData(rs));
 
         } catch (SQLException ex) {
 

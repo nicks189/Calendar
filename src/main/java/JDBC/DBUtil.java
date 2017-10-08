@@ -12,11 +12,12 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("Duplicates")
 public class DBUtil {
-    public static Connection getConnection(DBType type) throws SQLException {
+    public static Connection getConnection(DBType type) {
         Properties props = new Properties();
         FileInputStream in = null;
 
         try {
+
             switch (type) {
                 // Currently only supports MySQL
                 case MYSQL:
@@ -27,10 +28,14 @@ public class DBUtil {
                     String passwd = props.getProperty("db.passwd");
                     return DriverManager.getConnection(url, user, passwd);
             }
-        } catch (IOException ex) {
+
+        } catch (IOException | SQLException ex) {
+
             Logger lgr = Logger.getLogger(RetrieveAll.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
         } finally {
+
             try {
                 if (in != null) {
                     in.close();
@@ -39,7 +44,9 @@ public class DBUtil {
                 Logger lgr = Logger.getLogger(RetrieveAll.class.getName());
                 lgr.log(Level.SEVERE, ex.getMessage(), ex);
             }
+
         }
+
         System.exit(-1);
         // Redundant return stmt
         return null;
