@@ -2,6 +2,7 @@ package JDBC;
 
 import JDBC.beans.Note;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -12,6 +13,9 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         System.out.print(NoteManager.getAllRows());
 
+        Database.getSingleton().setDbType(DBType.MYSQL);
+
+        // ### INSERT ###
         Note n = new Note();
         Date date = InputHelper.getDateInput("Date (yyyy-MM-dd): ");
 
@@ -26,5 +30,15 @@ public class Main {
         if (NoteManager.insert(n)) {
             System.out.println("New row with primary key " + n.getId() + " was inserted.");
         }
+
+        // ### DELETE ###
+        // int id = InputHelper.getIntegerInput("Select a row to delete: ");
+        // if(NoteManager.delete(id)) {
+        //     System.out.println("Row deleted successfully.");
+        // } else {
+        //     System.out.println("Deletion failed.");
+        // }
+
+        Database.getSingleton().close();
     }
 }

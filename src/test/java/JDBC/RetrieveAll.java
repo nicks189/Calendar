@@ -5,10 +5,10 @@ import java.sql.*;
 public class RetrieveAll {
 
     public static void main(String[] args) throws SQLException {
+        Connection conn = Database.getSingleton().getConnection();
 
         try (
-                Connection con = DBUtil.getConnection(DBType.MYSQL);
-                CallableStatement cst = con.prepareCall("{CALL GET_ALL_NOTES()}",
+                CallableStatement cst = conn.prepareCall("{CALL GET_ALL_NOTES()}",
                         ResultSet.TYPE_SCROLL_INSENSITIVE,
                         ResultSet.CONCUR_READ_ONLY);
                 ResultSet rs = cst.executeQuery();
@@ -18,7 +18,7 @@ public class RetrieveAll {
 
         } catch (SQLException ex) {
 
-            DBUtil.processException(ex);
+            Database.processException(ex);
 
         }
     }

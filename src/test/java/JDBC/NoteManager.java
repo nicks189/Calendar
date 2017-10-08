@@ -1,17 +1,15 @@
 package JDBC;
 
 import JDBC.beans.Note;
-import com.sun.org.apache.regexp.internal.RESyntaxException;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class NoteManager {
 
+    private static Connection conn = Database.getSingleton().getConnection();
+
     public static String getAllRows() throws SQLException {
         try (
-                Connection conn = DBUtil.getConnection(DBType.MYSQL);
                 CallableStatement stmt = conn.prepareCall("{CALL GET_ALL_NOTES()}");
                 ResultSet rs = stmt.executeQuery();
                 ) {
@@ -34,7 +32,6 @@ public class NoteManager {
         String sql = "SELECT * FROM notes WHERE id = ?";
 
         try (
-                Connection conn = DBUtil.getConnection(DBType.MYSQL);
                 PreparedStatement pst = conn.prepareStatement(sql);
                 ) {
 
@@ -48,7 +45,7 @@ public class NoteManager {
             }
 
         } catch(SQLException e) {
-             DBUtil.processException(e);
+             Database.processException(e);
              return null;
         } finally {
             if (rs != null) {
@@ -62,15 +59,13 @@ public class NoteManager {
         String sql = "INSERT INTO notes (date, info) VALUES (?, ?)";
 
         try (
-                Connection conn = DBUtil.getConnection(DBType.MYSQL);
                 PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ) {
 
             pst.setDate(1, n.getDate());
             pst.setString(2, n.getInfo());
-            int affected = pst.executeUpdate();
 
-            if (affected == 1) {
+            if (pst.executeUpdate() == 1) {
                 keys = pst.getGeneratedKeys();
                 keys.next(); // Move result set to first and only element
                 n.setId(keys.getInt(1)); // Set Notes id to matching database id
@@ -79,7 +74,7 @@ public class NoteManager {
             }
 
         } catch (SQLException e) {
-            DBUtil.processException(e);
+            Database.processException(e);
             return false;
         } finally {
             if (keys != null) {
@@ -87,5 +82,49 @@ public class NoteManager {
             }
         }
         return true;
+    }
+
+    public static boolean update(Note n) {
+        String sql = "UPDATE notes SET date = ?, info = ? WHERE id = ?";
+
+        try (
+                PreparedStatement pst = conn.prepareStatement(sql);
+                ) {
+
+            pst.setDate(1, n.getDate());
+            pst.setString(2, n.getInfo());
+            pst.setInt(3, n.getId());
+
+            if(pst.executeUpdate() == 1) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            Database.processException(e);
+            return false;
+        }
+    }
+
+    public static boolean delete(int id) {
+        String sql = "DELETE FROM notes WHERE id = ?";
+
+        try (
+                PreparedStatement pst = conn.prepareStatement(sql);
+                ) {
+
+            pst.setInt(1, id);
+
+            if(pst.executeUpdate() == 1) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            Database.processException(e);
+            return false;
+        }
     }
 }

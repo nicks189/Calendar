@@ -1,9 +1,9 @@
 Calendar.iml
 target/
-src/test/
 logs/
 out/
 /.idea
 *.sh
 src/main/resources/
+src/test/resources/
 src/main/java/JDBC/Version.java
