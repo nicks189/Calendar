@@ -1,0 +1,15 @@
+# Copy of all current procedures in calendar_db
+
+GetAllNotes
+***********
+
+DROP PROCEDURE IF EXISTS GET_ALL_NOTES;
+
+DELIMITER //
+CREATE PROCEDURE GET_ALL_NOTES()
+BEGIN
+
+SELECT * FROM notes;
+
+END //
+DELIMITER ;
