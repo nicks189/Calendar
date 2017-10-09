@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.time.LocalDate;
 
 public class NoteManager {
 
@@ -21,6 +22,20 @@ public class NoteManager {
             }
             return buffer.toString();
         }
+    }
+
+    public static Note getRowsByMonth(LocalDate date) {
+        String sql = "SELECT * FROM notes WHERE date = date(NOW()) between ";
+
+        try (
+                PreparedStatement pst = conn.prepareStatement(sql);
+                ) {
+
+        } catch (SQLException e) {
+            Database.processException(e);
+            return null;
+        }
+        return null;
     }
 
     public static Note getRow(int id) throws SQLException {

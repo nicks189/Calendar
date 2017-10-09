@@ -41,6 +41,7 @@ public class Main {
     /**
      * @param args
      */
+    @SuppressWarnings("Duplicates")
     public static void main(String args[]) throws IOException {
         try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
         catch (ClassNotFoundException e) {}
