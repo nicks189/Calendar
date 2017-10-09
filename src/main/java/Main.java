@@ -6,10 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import javax.swing.BorderFactory;
@@ -20,8 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -146,7 +142,7 @@ public class Main {
                 if(val == null){}
                 else if(val.contains((CharSequence)"*")) {
                     try {
-                        Note tmp = new Note(val, currentMonth + 1, currentYear);
+                        NoteFrame tmp = new NoteFrame(val, currentMonth + 1, currentYear);
                         if(tmp.isEmpty()) {
                             tmp.deleteNote();
                             val = val.replace("*", "");
@@ -160,7 +156,7 @@ public class Main {
                 else {
                     val += "*";
                     try {
-                        Note tmp = new Note(val, currentMonth + 1, currentYear);
+                        NoteFrame tmp = new NoteFrame(val, currentMonth + 1, currentYear);
                         if(tmp.isEmpty()) {
                             tmp.deleteNote();
                             val = val.replace("*", "");
