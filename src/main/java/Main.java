@@ -8,7 +8,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -35,8 +38,7 @@ public class Main {
     static JScrollPane stblCalendar; //scroll pane
     static JPanel pnlCalendar; //panel
     static int realDay, realMonth, realYear, currentYear, currentMonth;
-    static String val, filepath;
-    static final String DIRECTORY = "/.calendarAppData/";
+    static String val;
 
     /**
      * @param args
@@ -48,13 +50,6 @@ public class Main {
         catch (InstantiationException e) {}
         catch (IllegalAccessException e) {}
         catch (UnsupportedLookAndFeelException e) {}
-
-        filepath = System.getProperty("user.home");
-        filepath += DIRECTORY;
-        File file = new File(filepath);
-        if(!file.exists()) {
-            file.mkdir();
-        }
 
         frmMain = new JFrame("Calendar Application");
         frmMain.setSize(628, 640);
@@ -140,31 +135,21 @@ public class Main {
                 int row = tblCalendar.rowAtPoint(e.getPoint());
                 int col = tblCalendar.columnAtPoint(e.getPoint());
                 val = (String)mdlCalendar.getValueAt(row, col);
-                if(val == null){}
-                else if(val.contains((CharSequence)"*")) {
-                    try {
-                        NoteFrame tmp = new NoteFrame(val, currentMonth + 1, currentYear);
-                        if(tmp.isEmpty()) {
-                            tmp.deleteNote();
-                            val = val.replace("*", "");
-                        }
-                    }
-                    catch(IOException error) {
-                        System.err.println("ERROR");
+                if (val == null) {
+                    // Do nothing
+                } else if (val.contains("*")) {
+                    NoteFrame nf = new NoteFrame(val, currentMonth, currentYear);
+                    if (nf.isEmpty()) {
+                        nf.deleteNote();
+                        val = val.replace("*", "");
                     }
                     mdlCalendar.setValueAt(val, row, col);
-                }
-                else {
-                    val += "*";
-                    try {
-                        NoteFrame tmp = new NoteFrame(val, currentMonth + 1, currentYear);
-                        if(tmp.isEmpty()) {
-                            tmp.deleteNote();
-                            val = val.replace("*", "");
-                        }
-                    }
-                    catch(IOException error) {
-                        System.err.println("ERROR");
+                } else {
+                    NoteFrame nf = new NoteFrame(val, currentMonth, currentYear);
+                    if (nf.isEmpty()) {
+                        nf.deleteNote();
+                    } else {
+                        val += "*";
                     }
                     mdlCalendar.setValueAt(val, row, col);
                 }
@@ -196,21 +181,28 @@ public class Main {
             }
         }
 
+        HashSet<String> scheduledDates = notesToDays(NoteManager.getNotesByMonthAndYear(month, year));
+
         //draw calendar
         for(int i = 1; i <= nod; i++) {
             int row = new Integer((i + som - 2) / 7);
             int column = (i + som - 2) % 7;
-            String filepathtmp = filepath;
-            filepathtmp += "note_" + (month + 1) + "_" + i + "_" + year;
-            File ftmp = new File(filepathtmp);
-            if(ftmp.exists()) {
+            if (scheduledDates.contains(Integer.toString(i))) {
                 mdlCalendar.setValueAt(Integer.toString(i) + "*", row, column);
-            }
-            else {
+                scheduledDates.remove(Integer.toString(i));
+            } else {
                 mdlCalendar.setValueAt(Integer.toString(i), row, column);
             }
         }
         tblCalendar.setDefaultRenderer(tblCalendar.getColumnClass(0), new tblCalendarRenderer());
+    }
+
+    public static HashSet<String> notesToDays(List<Note> notes) {
+        HashSet<String> days = new HashSet<>();
+        for (Note note : notes) {
+            days.add(Integer.toString(note.getDate().getDate()));
+        }
+        return days;
     }
 
     static class tblCalendarRenderer extends DefaultTableCellRenderer {

@@ -1,51 +1,31 @@
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-
+import javax.swing.JButton;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-
-import javax.swing.JButton;
-
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.sql.Date;
+import java.sql.SQLException;
 
 public class NoteFrame extends JFrame {
     private int month, year;
-    private String day;
+    private int day;
     private JPanel contentPane;
     private JTextArea textArea;
-    private String fpath;
-    private final String DIRECTORY = "/.calendarAppData/";
+    private Note note;
 
     /**
      * Create the frame.
-     * @throws IOException
      */
-    public NoteFrame(String d, int m, int y) throws IOException {
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        day = d;
+    public NoteFrame(String d, int m, int y) {
+        day = Integer.parseInt(d.replace("*", ""));
         month = m;
         year = y;
-
-        d = d.replace("*", "");
-        fpath = System.getProperty("user.home");
-        fpath += DIRECTORY;
-        fpath += "note_" + m + "_" + d + "_" + y;
 
         setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
@@ -72,8 +52,10 @@ public class NoteFrame extends JFrame {
         gbc_textField.gridy = 2;
         panel.add(textArea, gbc_textField);
 
-
-        readFromFile();
+        note = NoteManager.getNoteByDate(new Date(year - 1900, month, day));
+        if (note != null) {
+            textArea.setText(note.getInfo());
+        }
 
         JButton btnDone = new JButton("Save");
         btnDone.addActionListener(new hideBtnAction());
@@ -83,86 +65,52 @@ public class NoteFrame extends JFrame {
         panel.add(btnDone, gbc_btnDone);
     }
 
-    private void writeToFile() throws IOException {
-        FileWriter fwriter = null;
-        try {
-            fwriter = new FileWriter(fpath);
-            String output = textArea.getText();
-            fwriter.write(output);
+    public void deleteNote() {
+        if (note != null) {
+            NoteManager.delete(note.getId());
         }
-        finally {
-            if(fwriter != null) {
-                try {
-                    fwriter.close();
-                }
-                catch(IOException e) {
-                    System.err.println("Something went wrong in writeFromFile");
-                    return;
-                }
-            }
-        }
-    }
-
-    private void readFromFile() throws IOException {
-        File curFile = new File(fpath);
-        FileReader freader = null;
-        int tmp = 0;
-        String buffer = "";
-        if(curFile.exists()) {
-            try {
-                freader = new FileReader(fpath);
-                while((tmp = freader.read()) != -1) {
-                    buffer += (char)tmp;
-                }
-                textArea.setText(buffer);
-            }
-            finally {
-                if(freader != null) {
-                    try {
-                        freader.close();
-                    }
-                    catch(IOException e) {
-                        System.err.println("Something went wrong in Note.readFromFile");
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    public void deleteNote() throws IOException {
-        Path p = Paths.get(fpath);
-        Files.delete(p);
     }
 
     public boolean isEmpty() {
-        String tmp = textArea.getText().trim();
-        if(tmp.length() < 1) {
+        if (note != null) {
+            return note.getInfo().isEmpty();
+        } else {
             return true;
         }
-        return false;
     }
 
     private class hideBtnAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             setVisible(false);
-            try {
-                writeToFile();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            String info = textArea.getText();
+            Date date = new Date(year - 1900, month, day);
+            if (note != null) {
+                note.setInfo(info);
+                note.setDate(date);
+                NoteManager.update(note);
+            } else {
+                try {
+                    note = new Note();
+                    note.setInfo(info);
+                    note.setDate(date);
+                    NoteManager.insert(note);
+                } catch (SQLException ex) {
+                    System.err.print("Couldn't insert note into database.");
+                }
             }
+            NoteManager.update(note);
         }
     }
 
-    protected String getDay() {
+    public int getDay() {
         return day;
     }
 
-    protected int getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    protected int getYear() {
+    public int getYear() {
         return year;
     }
 
